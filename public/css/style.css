@@ -458,3 +458,24 @@ footer .social-media-links ul li{
     font-size: medium;
     cursor: pointer;
 }
+
+/* vote */
+.vote-bubble{
+    display: flex;
+    flex-direction: row;
+    color: var(--white);
+    background: var(--green);
+    padding: 20px 30px;
+    border-radius: 10px;
+    margin: 20px 0;
+    cursor: pointer;
+    width: 80vw;
+    justify-content: space-between;
+}
+.vote-bubble .content{
+    display: flex;
+    flex-direction: column;
+}
+.vote-bubble .status{
+    color: orange;
+}

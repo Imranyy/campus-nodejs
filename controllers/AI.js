@@ -41,6 +41,13 @@ const blogs=async(req,res)=>{
             url:'/register',
             class:'out',
             title:"Go to Sign up page"
+        },
+        {
+            id:4,
+            name:'Rongo university votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 }
@@ -61,6 +68,13 @@ const blog=async(req,res)=>{
             name:'For you',
             url:'/',
             title:"Lastest Feeds"
+        },
+        {
+            id:3,
+            name:'Rongo University Votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 }

@@ -1,0 +1,40 @@
+<html lang="en">
+<%- include('../partials/head.ejs')%>
+<body>
+    <%- include('../partials/nav.ejs')%>
+    <div class="vote start">
+       
+    </div>
+    <%- include('../partials/float.ejs')%>
+    <%- include('../partials/footer.ejs')%>
+    <!-- script -->
+    <script>
+        const vote=document.querySelector('.vote');
+        const candidates=[
+            {
+                id:1,
+                vyPost:"Presidential Post"
+            },
+            {
+                id:2,
+                vyPost:"Secretary General"
+            }
+        ]
+        let li='';
+        candidates.forEach(i=>{
+            li=`
+            <div class="vote-bubble">
+                <div class="content">
+                    <h2>${i.vyPost}</h2>
+                    <p>4 Constants</p>
+                </div>
+                <div class="status">
+                    <p>+ Ongoing</p>
+                </div>
+            </div>
+            `
+            vote.innerHTML+=li
+        })
+    </script>
+</body>
+</html>

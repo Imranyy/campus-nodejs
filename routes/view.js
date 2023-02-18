@@ -28,6 +28,13 @@ views.get('/home',(req,res)=>{
             url:'/register',
             class:'out',
             title:"Go to Sign up page"
+        },
+        {
+            id:4,
+            name:'Rongo University Votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 });
@@ -44,6 +51,13 @@ views.get('/dashboard',(req,res)=>{
             name:'Home',
             url:'/',
             title:"Back Home"
+        },
+        {
+            id:3,
+            name:'Rongo University Votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 });
@@ -99,6 +113,13 @@ views.get('/register',(req,res)=>{
             url:'/login',
             class:'out',
             title:"Go to login page"
+        },
+        {
+            id:4,
+            name:'Rongo University Votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 });
@@ -122,6 +143,13 @@ views.get('/verify',(req,res)=>{
             url:'/login',
             class:'out',
             title:"Go to login page"
+        },
+        {
+            id:4,
+            name:'Rongo University Votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 });
@@ -145,6 +173,13 @@ views.get('/last',(req,res)=>{
             url:'/login',
             class:'out',
             title:"Go to login page"
+        },
+        {
+            id:4,
+            name:'Rongo University Votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 });
@@ -163,15 +198,39 @@ views.get('/login',(req,res)=>{
             title:"Lastest Feeds"
         },
         {
-            id:2,
+            id:3,
             name:'Sign Up',
             url:'/register',
             class:'out',
             title:"Go to sign up page"
+        },
+        {
+            id:4,
+            name:'Rongo University Votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 });
 views.get('/blogs/:id',blog);
+
+views.get('/vote',(req,res)=>{
+    res.render('vote/index',{title:'Vote your right',classes:'closed',js:"/js/main.js",paths:[
+        {
+            id:1,
+            name:'For you',
+            url:'/',
+            title:"Lastest Feeds"
+        },
+        {
+            id:2,
+            name:'Home',
+            url:'/',
+            title:"Back Home"
+        }
+    ]})
+});
 //api routes
 views.use('/api',require('./API'));
 
@@ -189,6 +248,13 @@ views.use((req,res)=>{
             name:'For you',
             url:'/',
             title:"Lastest Feeds"
+        },
+        {
+            id:3,
+            name:'Rongo University Votes',
+            url:'/vote',
+            class:'out',
+            title:"Go to vote page"
         }
     ]})
 })
