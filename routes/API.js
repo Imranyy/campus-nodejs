@@ -17,7 +17,6 @@ const {
     changePassword,
     updateUserPic,
     deleteBlog,
-    postChat
 }=require('../controllers/AI');
 
 //api routes
@@ -33,7 +32,6 @@ router.post('/blog',postBlog)
 router.get('/blogs',getAllBlogs)
 router.get('/get-users',protectAdmin,getUser)
 router.get('/getblogs/:id',getBlog);
-router.post('/chat/:email',postChat)
 router.delete('/:email', deleteUser);
 router.delete('/blogs/blog/:id',protectAdmin, deleteBlog);
 // router.delete('/:email',protectUser||protectAdmin, deleteUser);

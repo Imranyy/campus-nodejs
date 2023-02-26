@@ -774,38 +774,11 @@ const userDetail=async(req,res)=>{
     }
 }
 
-//post chat
-const postChat=async(req,res)=>{    
-    try{
-        const {email}=req.params
-        const user=await User.findOne({email})
-        if(user){
-            const {message,date,time}=req.body
-            const addChat= await Chat.create({
-                firstName:user.firstName,
-                lastName:user.lastName,
-                message,
-                photo:user.photo,
-                email,
-                date,
-                time
-            })
-            res.status(200).send({msg:`Sent`});
-            if(!addChat){
-                res.status(201).send({error:`Try again!`});
-            }
-        }else{
-            res.status(404).send({error:`User not found!`});
-        }
-    }catch(error){
-        res.status(500).send({error:error.message})
-    }
-}
+
 
 //get all chats
 const getChats=async(req,res)=>{
-    const chats=await Chat.find({})
-    res.render('chats/index',{title:'Friends',js:'/js/main.js',chats,classes:'opened',paths:[
+    res.render('chats/index',{title:'Friends',js:'/js/main.js',classes:'opened',paths:[
         {
             id:1,
             name:'Home',
@@ -862,6 +835,5 @@ module.exports={
     updateUserPic,
     deleteBlog,
     userDetail,
-    postChat,
     getChats
 }

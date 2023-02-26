@@ -4,63 +4,64 @@
     <%- include('../partials/nav.ejs')%>
     <div class="chat">
         <div class="notify"></div>
-        <%if(chats.length>0){%>
         <div class="chat-window">
-                <%chats.forEach(item=>{%>
-                    <div class="chat-box" title="Sent on <%= item.date%>">
-                        <%if(item.photo){%>
-                            <a href="<%=item.photo%>">
-                                <img src="<%=item.photo%>"/>
-                            </a>
-                        <%}else{%>
-                            <a href="/assests/avatar.svg">
-                                <img src="/assests/avatar.svg"/>
-                            </a>
-                        <%}%>
-                        <div class="content">
-                            <div class="title" style="display: flex;">
-                                <strong><%=item.firstName%> <%=item.lastName%></strong> , 
-                                <div class="date" style="margin:0 5px;" data-date="<%=item.date%>"></div> 
-                                <%=item.time%>
-                            </div>
-                            <p><%=item.message%></p>
-                        </div>
-                    </div>
-                <%})%>
+                
         </div>
             <form style="display:none;">
                 <input type="text" name="message" placeholder="Message" required/>
                 <button><i class="fa fa-send"></i></button>
             </form>
-        <%}else{%>
-            <div class="notify">
-                <div class="tag">
-                    <p class="error">No internet!</p>
-                </div>
-            </div>
-        <%}%>
+    
     </div>
     <div class="bottom"></div>
 
      <!-- script -->
     <script>
+       
+
+        //notify
+        const notify=document.querySelector('.notify');
+        //socket server
+        const chatWindow=document.querySelector('.chat-window')
+        const socket =io('http://localhost:5000')
+        socket.on('output',data=>{
+            if(data.length>0){
+                data.forEach(i=>{
+                    chatWindow.innerHTML=`
+                   <div>${i.date}</div>
+                    `
+                })
+            }else{
+                handleSubmit.reset()
+                notify.innerHTML=`
+                    <div class='tag'>
+                        <p class="error">No internet!</p>
+                    </div>
+                    `
+                setTimeout(()=>{
+                    notify.innerHTML=''
+                },1000)
+            }
+        })
+
+        const handleSubmit=document.querySelector('form');
+
         //date
         const add=(a)=>{
             return a+1
-         }
-         const d=new Date()
-         const today=d.getDate()
-         const month=d.getMonth()
-         const year=d.getFullYear()
-         const date=`${today}/${add(month)}/${year}`
+        }
+        const d=new Date()
+        const today=d.getDate()
+        const month=d.getMonth()
+        const year=d.getFullYear()
+        const date=`${today}/${add(month)}/${year}`
         //time
          let time=``
-         if(d.getHours()>12){
+        if(d.getHours()>12){
             time=`${d.getHours()}:${d.getMinutes()}pm`
         }else{
              time=`${d.getHours()}:${d.getMinutes()}am`
         }
-
         //relative date displayed
         const dateHolder=document.querySelectorAll('.date')
         dateHolder.forEach(i => {
@@ -75,57 +76,95 @@
             }
         });
 
+        
 
-         const notify=document.querySelector('.notify');
-         const handleSubmit=document.querySelector('form')
-         function submit(){
-             handleSubmit.addEventListener('submit',async(e)=>{
-                 e.preventDefault()
-                 try {
-                const url=`/api/chat/${localStorage.getItem('email')}`
-                const response=await fetch(url,{
-                    method:'POST',
-                    headers:{
-                        'content-type':'application/json'
-                    },
-                    body:JSON.stringify({
-                        message:handleSubmit.message.value,
-                        date,
-                        time
+        //service worker
+        const publicVapidKey='BJ3OlUIn9QFTDtL9rUamLHYpUvMR8NgxOCWcpOSeJv7OenqN-zdt-i3sMAuRkMWsCwtE5sCDPnnccIkXZiCIf5Q';
+        //check for sw
+        if('serviceWorker' in navigator){
+            send().catch(err=>console.error(err));
+        }
+        //register sw, register push, send push
+        async function send(){
+            //registering sw
+            console.log('Registering sw...')
+            const register=await navigator.serviceWorker.register('/js/sw.js',{
+                scope:'/'
+            });
+            console.log('sw registered...');
+            //registering push
+            console.log('registering push...');
+            const subscription=await register.pushManager.subscribe({
+                userVisibleOnly:true,
+                applicationServerKey:urlBase64ToUint8Arry(publicVapidKey)
+            });
+            console.log('push registered...');
+            //send push notification
+            console.log('sending push...');
+
+            function submit(){
+                handleSubmit.addEventListener('submit',async(e)=>{
+                    e.preventDefault()
+                    try {
+                    const url=`/api/chat/${localStorage.getItem('email')}`
+                    const response=await fetch(url,{
+                        method:'POST',
+                        headers:{
+                            'content-type':'application/json'
+                        },
+                        body:JSON.stringify({
+                            message:handleSubmit.message.value,
+                            date,
+                            time
+                        })
                     })
+                    const parseRes=await response.json()
+                    if(parseRes.msg){
+                        handleSubmit.reset()
+                        window.location.reload()
+                        document.querySelector('.bottom').scrollIntoView()
+                    }else{
+                        document.querySelector('.bottom').scrollIntoView()
+                        handleSubmit.reset()
+                        notify.innerHTML=`
+                            <div class='tag'>
+                                <p class="error">${parseRes.error}</p>
+                            </div>
+                            `
+                            setTimeout(()=>{
+                                notify.innerHTML=''
+                            },1000)
+                    }
+                    } catch (error) {
+                        document.querySelector('.bottom').scrollIntoView()
+                        handleSubmit.reset()
+                        notify.innerHTML=`
+                            <div class='tag'>
+                                <p class="error">${error.message}</p>
+                            </div>
+                            `
+                            setTimeout(()=>{
+                                notify.innerHTML=''
+                            },1000)
+                    }
                 })
-               const parseRes=await response.json()
-               if(parseRes.msg){
-                handleSubmit.reset()
-                window.location.reload()
-                document.querySelector('.bottom').scrollIntoView()
-               }else{
-                document.querySelector('.bottom').scrollIntoView()
-                handleSubmit.reset()
-                notify.innerHTML=`
-                    <div class='tag'>
-                        <p class="error">${parseRes.error}</p>
-                    </div>
-                    `
-                    setTimeout(()=>{
-                        notify.innerHTML=''
-                    },1000)
-               }
-            } catch (error) {
-                document.querySelector('.bottom').scrollIntoView()
-                handleSubmit.reset()
-                notify.innerHTML=`
-                    <div class='tag'>
-                        <p class="error">${error.message}</p>
-                    </div>
-                    `
-                    setTimeout(()=>{
-                        notify.innerHTML=''
-                    },1000)
             }
-         })
-         }
 
+        }
+        function urlBase64ToUint8Arry(base64String){
+            const padding= '='.repeat((4-base64String.length % 4) %4);
+            const base64=(base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g,'/');
+            const rawData=window.atob(base64);
+            const outputArray=new Uint8Array(rawData.length);
+            for(let i=0;i<rawData.length;++i){
+                outputArray[i]=rawData.charCodeAt(i)
+            }
+            return outputArray;
+        }
+
+        
         if(localStorage.getItem('token')){
             handleSubmit.style.display='flex'
             submit()
